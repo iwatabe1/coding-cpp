@@ -6,4 +6,10 @@
     "[cpp]": {
         "editor.tabSize": 4,
     },
+    "files.associations": {
+        "ostream": "cpp",
+        "iostream": "cpp",
+        "array": "cpp",
+        "string_view": "cpp"
+    },
 }
