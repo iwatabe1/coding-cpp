@@ -1,43 +1,127 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
-// x番の組織について、子組織からの報告書が揃った時刻を返す
-// childrenは組織の関係を表す2次元配列(参照渡し)
-int complete_time(vector<vector<int>> &children, int x) {
-  if (children.at(x).size() == 0) {
-    return 1;
-  }
+// 以下に、24時間表記の時計構造体 Clock を定義する
+struct Clock {
+  // Clock構造体のメンバ変数を書く
+  int hour;
+  int minute;
+  int second;
 
-  int sum = 0;
-  for (int child : children.at(x)) {
-    sum += complete_time(children, child);
-  }
-  sum++;
-  return sum;
-}
+  // メンバ関数 set の定義を書く
+  //   関数名: set
+  //   引数: int h, int m, int s (それぞれ時、分、秒を表す)
+  //   返り値: なし
+  //   関数の説明:
+  //     時・分・秒を表す3つの引数を受け取り、
+  //     それぞれ、メンバ変数 hour, minute, second に代入する
+  void set(int h, int m, int s) {
+    hour = h;
+    minute = m;
+    second = s;
+  };
 
-// これ以降の行は変更しなくてよい
+  // メンバ関数 to_str の定義を書く
+  //   関数名: to_str
+  //   引数: なし
+  //   返り値: string型
+  //   関数の仕様:
+  //     メンバ変数が表す時刻の文字列を返す
+  //     時刻の文字列は次のフォーマット
+  //     "HH:MM:SS"
+  //     HH、MM、SSはそれぞれ時間、分、秒を2桁で表した文字列
+  string to_str() {
+    string ret;
+
+    if (hour < 10) {
+      ret += "0";
+    }
+
+    ret += to_string(hour);
+    ret += ":";
+
+    if (minute < 10) {
+      ret += "0";
+    }
+
+    ret += to_string(minute);
+    ret += ":";
+
+    if (second < 10) {
+      ret += "0";
+    }
+    ret += to_string(second);
+
+    return ret;
+  };
+
+  // メンバ関数 shift の定義を書く
+  //   関数名: shift
+  //   引数: int diff_second
+  //   返り値: なし
+  //   関数の仕様:
+  //     diff_second
+  //     秒だけメンバ変数が表す時刻を変更する(ただし、日付やうるう秒は考えない)
+  //     diff_second の値が負の場合、時刻を戻す
+  //     diff_second の値が正の場合、時刻を進める
+  //     diff_second の値は -86400 ~ 86400 の範囲を取とりうる
+  void shift(int diff_second) {
+    int diff_hour = diff_second / 3600;
+    diff_second %= 3600;
+    int diff_minute = diff_second / 60;
+    diff_second %= 60;
+
+    second += diff_second;
+    if (second >= 60) {
+      minute += 1;
+      second -= 60;
+    } else if (second < 0) {
+      minute -= 1;
+      second += 60;
+    }
+
+    minute += diff_minute;
+    if (minute >= 60) {
+      hour += 1;
+      minute -= 60;
+    } else if (minute < 0) {
+      hour -= 1;
+      minute += 60;
+    }
+
+    hour += diff_hour;
+    if (hour >= 24) {
+      hour -= 24;
+    } else if (hour < 0) {
+      hour += 24;
+    }
+  };
+};
+
+// -------------------
+// ここから先は変更しない
+// -------------------
 
 int main() {
-  int N;
-  cin >> N;
+  // 入力を受け取る
+  int hour, minute, second;
+  cin >> hour >> minute >> second;
+  int diff_second;
+  cin >> diff_second;
 
-  vector<int> p(N);  // 各組織の親組織を示す配列
-  p.at(0) = -1;  // 0番組織の親組織は存在しないので-1を入れておく
-  for (int i = 1; i < N; i++) {
-    cin >> p.at(i);
-  }
+  // Clock構造体のオブジェクトを宣言
+  Clock clock;
 
-  // 組織の関係から2次元配列を作る(理解しなくてもよい)
-  vector<vector<int>> children(
-      N);  // ある組織の子組織の番号一覧  // N×0の二次元配列
-  for (int i = 1; i < N; i++) {
-    int parent = p.at(i);              // i番の親組織の番号
-    children.at(parent).push_back(i);  // parentの子組織一覧にi番を追加
-  }
+  // set関数を呼び出して時刻を設定する
+  clock.set(hour, minute, second);
 
-  // 0番の組織の元に報告書が揃う時刻を求める
-  for (int i = 0; i < N; ++i) {
-    cout << complete_time(children, i) << endl;
-  }
+  // 時刻を出力
+  cout << clock.to_str() << endl;
+
+  // 時計を進める(戻す)
+  clock.shift(diff_second);
+
+  // 変更後の時刻を出力
+  cout << clock.to_str() << endl;
 }
