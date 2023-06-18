@@ -1,0 +1,19 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.clang_format_style": "Google",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "[cpp]": {
+        "editor.tabSize": 4,
+    },
+    "files.associations": {
+        "ostream": "cpp",
+        "iostream": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "cstdlib": "cpp",
+        "string": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
+    },
+}
